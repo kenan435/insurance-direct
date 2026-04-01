@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kotlin-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kotlin-service
+  template:
+    metadata:
+      labels:
+        app: kotlin-service
+    spec:
+      containers:
+        - name: kotlin-service
+          image: <your-ecr-repo>/kotlin-service:latest
+          ports:
+            - containerPort: 8080
+          env:
+            # Inject the node IP so telemetry goes to the DaemonSet collector on the same node
+            - name: OTEL_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_IP):4317
+            - name: OTEL_SERVICE_NAME
+              value: kotlin-service
+            - name: OTEL_SERVICE_VERSION
+              value: "1.0.0"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: cx.application.name=hellas,cx.subsystem.name=kotlin-service
+            - name: OTEL_TRACES_EXPORTER
+              value: otlp
+            - name: OTEL_METRICS_EXPORTER
+              value: none
+            - name: OTEL_LOGS_EXPORTER
+              value: none
+            - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
+              value: grpc

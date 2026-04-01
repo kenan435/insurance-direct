@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-service
+  template:
+    metadata:
+      labels:
+        app: python-service
+    spec:
+      containers:
+        - name: python-service
+          image: <your-ecr-repo>/python-service:latest
+          ports:
+            - containerPort: 8000
+          env:
+            # Inject the node IP so telemetry goes to the DaemonSet collector on the same node
+            - name: OTEL_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_IP):4317
+            - name: OTEL_SERVICE_NAME
+              value: python-service
+            - name: OTEL_SERVICE_VERSION
+              value: "1.0.0"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: cx.application.name=hellas,cx.subsystem.name=python-service
+            - name: OTEL_TRACES_EXPORTER
+              value: otlp
+            - name: OTEL_METRICS_EXPORTER
+              value: otlp
+            - name: OTEL_LOGS_EXPORTER
+              value: otlp
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: grpc
