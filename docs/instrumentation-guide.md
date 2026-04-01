@@ -14,6 +14,10 @@ This guide covers deploying the Coralogix OpenTelemetry collector to your EKS cl
 
 ## Part 1: Deploy the Coralogix Collector
 
+> **Note:** The recommended way to deploy the collector is through the **Coralogix UI** — go to *Integrations → Kubernetes Observability* and follow the guided setup. It will walk you through feature selection and generate the exact Helm command for your environment.
+>
+> The steps below and the `collector/values.yaml` in this repo are a **reference sample** showing the configuration used in this POC. Use them to understand what was enabled and why — not as a copy-paste replacement for the UI flow.
+
 The collector runs as three components on your cluster:
 - **DaemonSet agent** — one pod per node, collects logs, metrics, and receives telemetry from your apps
 - **Cluster collector** — single pod, collects Kubernetes cluster metrics and events
@@ -38,7 +42,7 @@ kubectl create secret generic coralogix-keys \
 
 ### Step 3: Deploy the collector
 
-Download the `values.yaml` from this repository (`collector/values.yaml`), update the `clusterName` field, then run:
+The Coralogix UI will generate this command with your API key and cluster name pre-filled. The `values.yaml` in this repository (`collector/values.yaml`) is a sample showing the features enabled for this POC — update `clusterName` before use:
 
 ```bash
 helm upgrade --install otel-coralogix-integration coralogix/otel-integration \
