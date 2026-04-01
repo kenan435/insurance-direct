@@ -79,6 +79,8 @@ The node IP is injected into the pod at runtime using the Kubernetes Downward AP
   value: http://$(OTEL_IP):4317
 ```
 
+> Port `4317` is used for gRPC. The collector also listens on `4318` for HTTP/protobuf. Both Kotlin and Python are configured for gRPC in the examples below.
+
 ---
 
 ### Kotlin / Java (JVM)
@@ -120,7 +122,10 @@ env:
     value: grpc
 ```
 
-> `cx.application.name` and `cx.subsystem.name` control how your service appears in the Coralogix UI. Set them to something meaningful for your team.
+> `cx.application.name` and `cx.subsystem.name` control how your service appears in the Coralogix UI. Set them to something meaningful for your team. You can also add any custom tags here, for example:
+> ```
+> cx.application.name=hellas,cx.subsystem.name=your-service-name,environment=production,team=backend
+> ```
 
 Log correlation is automatic — the Java agent injects `trace_id` and `span_id` into your log output (Logback and Log4j2 supported), allowing you to jump from a log line directly to the corresponding trace in Coralogix.
 
@@ -170,6 +175,8 @@ env:
   - name: OTEL_EXPORTER_OTLP_PROTOCOL
     value: grpc
 ```
+
+> Same as Kotlin — `cx.application.name`, `cx.subsystem.name`, and any custom tags can be added to `OTEL_RESOURCE_ATTRIBUTES`.
 
 ---
 
