@@ -180,6 +180,88 @@ env:
 
 ---
 
+---
+
+## Collector Architecture & Configuration
+
+The `collector/values.yaml` deploys three components with the following features enabled.
+
+### Architecture overview
+
+```
+  App Pod                Node
+  ┌─────────────┐        ┌──────────────────────────────────────┐
+  │ kotlin/     │─OTLP──▶│ DaemonSet Agent (one per node)       │
+  │ python app  │  gRPC  │  - receives app traces/metrics/logs  │
+  └─────────────┘        │  - collects host & kubelet metrics   │
+                         │  - routes traces → Gateway           │
+                         │  - ships logs/metrics → Coralogix    │
+                         └──────────────┬───────────────────────┘
+                                        │ traces (load balanced by traceID)
+                         ┌──────────────▼───────────────────────┐
+                         │ Tail Sampling Gateway (3 replicas)   │
+                         │  - waits 30s to see full trace       │
+                         │  - keeps: all errors                 │
+                         │  - keeps: 10% of remaining traces    │
+                         │  - ships sampled traces → Coralogix  │
+                         └──────────────────────────────────────┘
+
+  Cluster
+  ┌──────────────────────────────────────┐
+  │ Cluster Collector (single pod)       │
+  │  - K8s events, resources, metadata  │
+  │  - cluster & API server metrics      │
+  └──────────────────────────────────────┘
+```
+
+### DaemonSet agent — enabled features
+
+| Feature | What it collects |
+|---|---|
+| `logsCollection` | Stdout/stderr from all pods in the cluster |
+| `hostMetrics` | CPU, memory, disk, network per node + per-process stats |
+| `kubeletMetrics` | Pod resource usage (requests vs. actual) |
+| `kubernetesExtraMetrics` | Additional K8s metrics per node |
+| `spanMetrics` | Generates RED metrics (rate, errors, duration) from traces |
+| `profilesCollection` | Continuous profiling via eBPF |
+| `statsdReceiver` | Accepts StatsD metrics on UDP 8125 |
+| `hostEntityEvents` | Node lifecycle events |
+| `loadBalancing` | Routes traces to gateway, consistent hashing by traceID |
+| `fleetManagement` | Remote config and agent supervision via Coralogix |
+
+**Span metrics histogram buckets:** `1ms, 4ms, 10ms, 20ms, 50ms, 100ms, 200ms, 500ms, 1s, 2s, 5s`
+
+These are auto-generated as Prometheus metrics in Coralogix under the `traces_` prefix, e.g. `traces_spanmetrics_duration_bucket`.
+
+### Cluster collector — enabled features
+
+| Feature | What it collects |
+|---|---|
+| `kubernetesEvents` | Pod scheduling, image pulls, restarts, OOMKills |
+| `kubernetesResources` | Deployments, ReplicaSets, Services as structured logs |
+| `clusterMetrics` | Deployment replicas desired vs. ready, namespace quotas |
+| `kubernetesApiServerMetrics` | API server latency and request counts |
+| `reduceResourceAttributes` | Strips high-cardinality attributes to reduce volume |
+
+### Tail sampling gateway — policies
+
+The gateway holds each trace in memory for **30 seconds** to wait for all spans before making a sampling decision.
+
+| Policy | Type | Rule |
+|---|---|---|
+| `errors` | status_code | Always keep traces containing at least one ERROR span |
+| `randomized-10-percent` | probabilistic | Keep 10% of all other traces |
+
+This means in production you get **full fidelity on errors** + a statistically representative 10% sample of healthy traffic — without paying to store every trace.
+
+The gateway runs as **3 replicas** and receives traces from all agents via load-balanced gRPC. Routing is consistent by `traceID` so all spans for a given trace always go to the same gateway replica.
+
+### eBPF instrumentation
+
+`opentelemetry-ebpf-instrumentation` is enabled — this provides zero-code distributed tracing for workloads that cannot be instrumented with the Java agent or Python distro (e.g. binaries, legacy services). It instruments at the kernel level via eBPF.
+
+---
+
 ## Reference
 
 Full working examples for both services are in this repository:
