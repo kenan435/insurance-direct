@@ -59,10 +59,10 @@ env:
   - name: OTEL_TRACES_EXPORTER
     value: otlp
   - name: OTEL_METRICS_EXPORTER
-    value: none
+    value: otlp
   - name: OTEL_LOGS_EXPORTER
-    value: none
-  - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
+    value: otlp
+  - name: OTEL_EXPORTER_OTLP_PROTOCOL
     value: grpc
 ```
 

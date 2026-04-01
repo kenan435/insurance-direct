@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kotlin-service
-  namespace: default
+  namespace: hellas
 spec:
   replicas: 1
   selector:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: kotlin-service
-          image: <your-ecr-repo>/kotlin-service:latest
+          image: kenan435/kotlin-service:latest
           ports:
             - containerPort: 8080
           env:
@@ -35,8 +35,8 @@ spec:
             - name: OTEL_TRACES_EXPORTER
               value: otlp
             - name: OTEL_METRICS_EXPORTER
-              value: none
+              value: otlp
             - name: OTEL_LOGS_EXPORTER
-              value: none
-            - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
+              value: otlp
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
               value: grpc
