@@ -10,9 +10,7 @@ opentelemetry-cluster-collector:
     kubernetesResources:
       enabled: true
     fleetManagement:
-      enabled: true
-      supervisor:
-        enabled: true
+      enabled: false
     clusterMetrics:
       enabled: true
     collectorMetrics:
@@ -27,9 +25,7 @@ opentelemetry-agent:
     hostEntityEvents:
       enabled: true
     fleetManagement:
-      enabled: true
-      supervisor:
-        enabled: true
+      enabled: false
     spanMetrics:
       enabled: true
       histogramBuckets:
