@@ -148,11 +148,17 @@ RUN opentelemetry-bootstrap -a install
 
 #### 2. Start your app via `opentelemetry-instrument`
 
+**Flask + Gunicorn:**
 ```dockerfile
-CMD ["opentelemetry-instrument", "python", "app.py"]
-# or for uvicorn:
+CMD ["opentelemetry-instrument", "gunicorn", "app:app", "--bind", "0.0.0.0:8000", "--preload"]
+```
+
+**FastAPI + uvicorn:**
+```dockerfile
 CMD ["opentelemetry-instrument", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
+
+> The `--preload` flag is required for Gunicorn — it ensures the OTel instrumentation is applied before worker processes fork. Without it you can lose traces.
 
 #### 3. Add environment variables to your Kubernetes deployment
 
@@ -273,6 +279,6 @@ Full working examples for both services are in this repository:
 | Directory | Language | Framework |
 |---|---|---|
 | [`kotlin-service/`](../kotlin-service/) | Kotlin (JVM) | Spring Boot |
-| [`python-service/`](../python-service/) | Python | FastAPI |
+| [`python-service/`](../python-service/) | Python | Flask + Gunicorn |
 
 The `collector/values.yaml` in this repository contains the full Helm chart configuration used to deploy the collector.

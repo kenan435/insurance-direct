@@ -124,7 +124,7 @@ See the full example in [`python-service/k8s/deployment.yaml`](./python-service/
 | Directory | Language | Framework |
 |---|---|---|
 | [`kotlin-service/`](./kotlin-service/) | Kotlin (JVM) | Spring Boot |
-| [`python-service/`](./python-service/) | Python | FastAPI |
+| [`python-service/`](./python-service/) | Python | Flask + Gunicorn |
 
 ---
 
