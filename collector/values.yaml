@@ -114,9 +114,7 @@ opentelemetry-gateway:
     collectorMetrics:
       enabled: true
     fleetManagement:
-      enabled: true
-      supervisor:
-        enabled: true
+      enabled: false
   distribution: eks
   provider: aws
 coralogix-ebpf-profiler:
