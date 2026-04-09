@@ -80,7 +80,7 @@ RUN opentelemetry-bootstrap -a install
 ### 2. Run your app via `opentelemetry-instrument`
 
 ```dockerfile
-CMD ["opentelemetry-instrument", "python", "app.py"]
+CMD ["opentelemetry-instrument", "gunicorn", "app:app", "--bind", "0.0.0.0:8000", "--preload"]
 ```
 
 ### 3. Add env vars to your K8s deployment
