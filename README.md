@@ -36,7 +36,7 @@ Instrumentation is done via the [OpenTelemetry Java agent](https://github.com/op
 ### 1. Add the agent to your Docker image
 
 ```dockerfile
-COPY opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
+ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
 ENV JAVA_TOOL_OPTIONS="-javaagent:/app/opentelemetry-javaagent.jar"
 ```
 
