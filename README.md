@@ -1,4 +1,4 @@
-# Hellas Direct — OpenTelemetry Instrumentation Guide
+# Hellas Direct — OpenTelemetry POC
 
 This repo contains reference instrumentation examples for sending traces, metrics, and logs from your Kubernetes services to Coralogix via OpenTelemetry.
 
@@ -13,7 +13,7 @@ Once deployed, a collector pod runs on every node (DaemonSet) and listens on por
 ## How it works
 
 ```
-Your App Pod  →  OTel Collector (DaemonSet, same node)  →  Coralogix
+Your App Pod  →  OTel Agent (DaemonSet, same node)  →  Gateway (tail sampling, 3 replicas)  →  Coralogix
 ```
 
 The app uses the node's IP (injected via the Kubernetes Downward API) to reach the collector:
@@ -31,7 +31,7 @@ The app uses the node's IP (injected via the Kubernetes Downward API) to reach t
 
 ## Kotlin / Java (JVM)
 
-Instrumentation is done via the [OpenTelemetry Java agent](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar) — no code changes required.
+Instrumentation is done via the [OpenTelemetry Java agent](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest) — no code changes required.
 
 ### 1. Add the agent to your Docker image
 
@@ -125,6 +125,8 @@ The collector is deployed via the Coralogix `otel-integration` Helm chart with t
 - **Span metrics** — auto-generated RED metrics (rate, errors, duration) from traces
 - **Tail sampling** — 3-replica gateway; always keeps error traces, 10% probabilistic sample of the rest
 - **Kubernetes events & cluster metrics** — pod scheduling, restarts, replica counts, API server metrics
+
+---
 
 ## Querying your data in Coralogix
 
