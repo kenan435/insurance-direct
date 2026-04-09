@@ -1,4 +1,4 @@
-# Hellas Direct — OpenTelemetry POC
+# Insurance Direct — OpenTelemetry POC
 
 This repo contains reference instrumentation examples for Kotlin and Python services running on Kubernetes. Before the integration call, instrument your services using the steps below. During the call we will connect your cluster to the Coralogix backend and provision the collector and agents.
 
@@ -40,7 +40,7 @@ env:
   - name: OTEL_SERVICE_VERSION
     value: "1.0.0"
   - name: OTEL_RESOURCE_ATTRIBUTES
-    value: cx.application.name=hellas,cx.subsystem.name=your-service-name
+    value: cx.application.name=insurance-direct,cx.subsystem.name=your-service-name
   - name: OTEL_EXPORTER_OTLP_PROTOCOL
     value: grpc
 ```
@@ -83,7 +83,7 @@ env:
   - name: OTEL_SERVICE_VERSION
     value: "1.0.0"
   - name: OTEL_RESOURCE_ATTRIBUTES
-    value: cx.application.name=hellas,cx.subsystem.name=your-service-name
+    value: cx.application.name=insurance-direct,cx.subsystem.name=your-service-name
   - name: OTEL_EXPORTER_OTLP_PROTOCOL
     value: grpc
 ```

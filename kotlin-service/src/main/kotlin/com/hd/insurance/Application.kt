@@ -1,4 +1,4 @@
-package com.hellas.insurance
+package com.hd.insurance
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

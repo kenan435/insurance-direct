@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kotlin-service
-  namespace: hellas
+  namespace: insurance-direct
 spec:
   replicas: 1
   selector:
@@ -31,6 +31,6 @@ spec:
             - name: OTEL_SERVICE_VERSION
               value: "1.0.0"
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: cx.application.name=hellas,cx.subsystem.name=kotlin-service
+              value: cx.application.name=insurance-direct,cx.subsystem.name=kotlin-service
             - name: OTEL_EXPORTER_OTLP_PROTOCOL
               value: grpc
