@@ -99,8 +99,3 @@ See the full example in [`python-service/k8s/deployment.yaml`](./python-service/
 | [`kotlin-service/`](./kotlin-service/) | Kotlin (JVM) | Spring Boot | `GET /policies`, `POST /claims` |
 | [`python-service/`](./python-service/) | Python | Flask + Gunicorn | `GET /policies`, `GET /policies/{id}`, `POST /claims` |
 
----
-
-## Querying your data in Coralogix
-
-Once the collector is up and traffic is flowing, use the DataPrime queries in [docs/dataprime-queries.md](docs/dataprime-queries.md) to explore your logs, traces, and metrics. Includes a full field reference.
