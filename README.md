@@ -124,11 +124,7 @@ The collector is deployed via the Coralogix `otel-integration` Helm chart with t
 - **Host & kubelet metrics** — CPU, memory, disk, network per node and pod
 - **Span metrics** — auto-generated RED metrics (rate, errors, duration) from traces
 - **Tail sampling** — 3-replica gateway; always keeps error traces, 10% probabilistic sample of the rest
-- **Continuous profiling** — eBPF-based, zero instrumentation required
 - **Kubernetes events & cluster metrics** — pod scheduling, restarts, replica counts, API server metrics
-- **eBPF auto-instrumentation** — distributed tracing for services that can't use the Java agent or Python distro
-
-For the full deployment walkthrough and architecture diagram see the [instrumentation guide](docs/instrumentation-guide.md).
 
 ## Querying your data in Coralogix
 
