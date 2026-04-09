@@ -4,6 +4,16 @@ This repo contains reference instrumentation examples for Kotlin and Python serv
 
 ---
 
+## How it works
+
+```
+Your App Pod  →  OTel Agent (DaemonSet, same node)  →  Gateway (tail sampling, 3 replicas)  →  Coralogix
+```
+
+The agent runs as a DaemonSet — one pod per node. Your app sends telemetry to the agent on the same node using the node's IP, and the agent forwards it to Coralogix.
+
+---
+
 ## Kotlin / Java (JVM)
 
 Instrumentation is done via the [OpenTelemetry Java agent](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest) — no code changes required.
