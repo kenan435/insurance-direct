@@ -50,10 +50,9 @@ opentelemetry-agent:
       pipelines:
       - logs
       - metrics
-      - profiles
       privateKey: ${env:CORALOGIX_PRIVATE_KEY}
     profilesCollection:
-      enabled: true
+      enabled: false
     transactions:
       enabled: false
     logsCollection:
@@ -84,9 +83,6 @@ opentelemetry-agent:
           - loadbalancing
   targetAllocator:
     enabled: false
-  command:
-    extraArgs:
-      - --feature-gates=service.profilesSupport
   distribution: eks
   provider: aws
 opentelemetry-gateway:
@@ -116,6 +112,6 @@ opentelemetry-gateway:
 coralogix-ebpf-profiler:
   enabled: false
 opentelemetry-ebpf-instrumentation:
-  enabled: true  # eBPF auto-instrumentation — confirm with George
+  enabled: false
 coralogix-operator:
   enabled: false

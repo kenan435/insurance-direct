@@ -17,6 +17,8 @@ This guide covers deploying the Coralogix OpenTelemetry collector to your EKS cl
 > **Important:** Collector deployment must be done through the **Coralogix UI** — go to *Integrations → Kubernetes Observability*. The UI is where you create your Send-Your-Data API key, select features, and get the generated Helm command pre-filled for your environment.
 >
 > The steps below and the `collector/values.yaml` in this repo are a **reference sample** showing the configuration used in this POC. Use them to understand what was enabled and why.
+>
+> **Note on Continuous Profiling:** When going through the wizard, leave **Continuous Profiling** unchecked unless you specifically need it. Enabling it adds a `profiles` pipeline to the agent that requires an additional feature gate flag (`--feature-gates=service.profilesSupport`) which the wizard does not add automatically, causing the agent to crash on startup.
 
 The collector runs as three components on your cluster:
 - **DaemonSet agent** — one pod per node, collects logs, metrics, and receives telemetry from your apps
@@ -116,12 +118,6 @@ env:
     value: "1.0.0"
   - name: OTEL_RESOURCE_ATTRIBUTES
     value: cx.application.name=hellas,cx.subsystem.name=your-service-name
-  - name: OTEL_TRACES_EXPORTER
-    value: otlp
-  - name: OTEL_METRICS_EXPORTER
-    value: otlp
-  - name: OTEL_LOGS_EXPORTER
-    value: otlp
   - name: OTEL_EXPORTER_OTLP_PROTOCOL
     value: grpc
 ```
@@ -176,12 +172,6 @@ env:
     value: "1.0.0"
   - name: OTEL_RESOURCE_ATTRIBUTES
     value: cx.application.name=hellas,cx.subsystem.name=your-service-name
-  - name: OTEL_TRACES_EXPORTER
-    value: otlp
-  - name: OTEL_METRICS_EXPORTER
-    value: otlp
-  - name: OTEL_LOGS_EXPORTER
-    value: otlp
   - name: OTEL_EXPORTER_OTLP_PROTOCOL
     value: grpc
 ```
@@ -233,7 +223,7 @@ The `collector/values.yaml` deploys three components with the following features
 | `kubeletMetrics` | Pod resource usage (requests vs. actual) |
 | `kubernetesExtraMetrics` | Additional K8s metrics per node |
 | `spanMetrics` | Generates RED metrics (rate, errors, duration) from traces |
-| `profilesCollection` | Continuous profiling via eBPF |
+| `profilesCollection` | Continuous profiling via eBPF *(optional — leave unchecked in wizard to avoid feature gate requirement)* |
 | `statsdReceiver` | Accepts StatsD metrics on UDP 8125 |
 | `hostEntityEvents` | Node lifecycle events |
 | `loadBalancing` | Routes traces to gateway, consistent hashing by traceID |
