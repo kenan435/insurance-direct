@@ -2,11 +2,11 @@
 
 This repo contains reference instrumentation examples for sending traces, metrics, and logs from your Kubernetes services to Coralogix via OpenTelemetry.
 
-## Prerequisites
+## Overview
 
-The Coralogix OpenTelemetry collector must be deployed to your EKS cluster before instrumenting your apps. Collector deployment will be covered during the integration call.
+This repo will be walked through during the integration call. It contains reference service implementations showing how traces, metrics, and logs flow from your Kubernetes applications to Coralogix via OpenTelemetry.
 
-Once deployed, a collector pod runs on every node (DaemonSet) and listens on port `4317`. Your apps send telemetry to the collector on the same node — not directly to Coralogix.
+The collector setup, instrumentation, and querying will all be covered live during the call.
 
 ---
 
