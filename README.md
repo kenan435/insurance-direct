@@ -56,12 +56,6 @@ env:
     value: "1.0.0"
   - name: OTEL_RESOURCE_ATTRIBUTES
     value: cx.application.name=hellas,cx.subsystem.name=your-service-name
-  - name: OTEL_TRACES_EXPORTER
-    value: otlp
-  - name: OTEL_METRICS_EXPORTER
-    value: otlp
-  - name: OTEL_LOGS_EXPORTER
-    value: otlp
   - name: OTEL_EXPORTER_OTLP_PROTOCOL
     value: grpc
 ```
@@ -105,12 +99,6 @@ env:
     value: "1.0.0"
   - name: OTEL_RESOURCE_ATTRIBUTES
     value: cx.application.name=hellas,cx.subsystem.name=your-service-name
-  - name: OTEL_TRACES_EXPORTER
-    value: otlp
-  - name: OTEL_METRICS_EXPORTER
-    value: otlp
-  - name: OTEL_LOGS_EXPORTER
-    value: otlp
   - name: OTEL_EXPORTER_OTLP_PROTOCOL
     value: grpc
 ```
