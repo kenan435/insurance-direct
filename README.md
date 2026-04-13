@@ -24,9 +24,8 @@ flowchart TB
         end
 
         Gateway["OTel Gateway\n(tail sampling · 3 replicas)"]
+        ClusterCollector["Cluster Collector\n(K8s metrics · node · pod state)"]
     end
-
-    ClusterCollector["Cluster Collector\n(K8s metrics · node · pod state)"]
 
     subgraph Coralogix["☁️ Coralogix"]
         RUM["RUM\n(sessions · recordings)"]
