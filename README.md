@@ -92,10 +92,55 @@ See the full example in [`python-service/k8s/deployment.yaml`](./python-service/
 
 ---
 
+## Angular (RUM)
+
+Real User Monitoring runs entirely in the browser — no OTel agent involved. RUM data is sent directly from the user's browser to Coralogix.
+
+### 1. Install the SDK
+
+```bash
+npm install @coralogix/browser
+```
+
+### 2. Initialise before bootstrapping your app
+
+In `main.ts`, call `CoralogixRum.init()` before `bootstrapApplication()`:
+
+```ts
+import { CoralogixRum } from '@coralogix/browser';
+
+CoralogixRum.init({
+  application: 'your-app-name',
+  environment: 'production',
+  public_key: '<your-rum-public-key>',
+  coralogixDomain: 'EU2',
+  version: '1.0.0',
+  runOutsideAngularZone: true,
+  sessionRecordingConfig: {
+    enable: true,
+    autoStartSessionRecording: true,
+    recordConsoleEvents: true,
+    sessionRecordingSampleRate: 100,
+  },
+  traceParentInHeader: {
+    enabled: true,
+  },
+});
+```
+
+> **RUM public key** is different from the Send-Your-Data API key used for the collector. Find it in Coralogix under *Data Flow → API Keys → RUM*.
+>
+> **`traceParentInHeader`** injects a `traceparent` header into HTTP requests your app makes to backend services. This links browser spans to backend OTel spans, giving you a full end-to-end trace in one view — no backend changes required.
+
+See the full example in [`angular-rum/src/main.ts`](./angular-rum/src/main.ts).
+
+---
+
 ## Reference services
 
-| Directory | Language | Framework | Endpoints |
+| Directory | Language / Type | Framework | Endpoints |
 |---|---|---|---|
 | [`kotlin-service/`](./kotlin-service/) | Kotlin (JVM) | Spring Boot | `GET /policies`, `POST /claims` |
 | [`python-service/`](./python-service/) | Python | Flask + Gunicorn | `GET /policies`, `GET /policies/{id}`, `POST /claims` |
+| [`angular-rum/`](./angular-rum/) | TypeScript (Browser) | Angular 17 | RUM demo UI |
 

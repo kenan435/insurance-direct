@@ -1,0 +1,17 @@
+<h1>Insurance Direct — RUM Demo</h1>
+
+<section>
+  <h2>Kotlin Service</h2>
+  <button (click)="getKotlinPolicies()">GET /policies</button>
+  <button (click)="submitKotlinClaim()">POST /claims</button>
+</section>
+
+<section>
+  <h2>Python Service</h2>
+  <button (click)="getPythonPolicies()">GET /policies</button>
+  <button (click)="submitPythonClaim()">POST /claims</button>
+</section>
+
+<p class="loading" *ngIf="loading">Loading...</p>
+<p class="error" *ngIf="error">Error: {{ error }}</p>
+<pre *ngIf="response">{{ response | json }}</pre>

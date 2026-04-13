@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: angular-rum
+  namespace: insurance-direct
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: angular-rum
+  template:
+    metadata:
+      labels:
+        app: angular-rum
+    spec:
+      containers:
+        - name: angular-rum
+          image: kenan435/angular-rum:latest
+          ports:
+            - containerPort: 80
