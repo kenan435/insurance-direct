@@ -26,6 +26,8 @@ flowchart TB
         Gateway["OTel Gateway\n(tail sampling · 3 replicas)"]
     end
 
+    ClusterCollector["Cluster Collector\n(K8s metrics · node · pod state)"]
+
     subgraph Coralogix["☁️ Coralogix"]
         RUM["RUM\n(sessions · recordings)"]
         APM["APM\n(traces · metrics · logs)"]
@@ -38,6 +40,7 @@ flowchart TB
     Python -- "OTLP gRPC\n(hostIP:4317)" --> Agent
     Agent --> Gateway
     Gateway --> APM
+    ClusterCollector -- "K8s metrics" --> APM
     Angular -- "RUM events\n(direct ingress)" --> RUM
 
     style Browser fill:#e8f4fd,stroke:#2196f3
