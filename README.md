@@ -94,6 +94,8 @@ See the full example in [`python-service/k8s/deployment.yaml`](./python-service/
 
 ## Angular (RUM)
 
+> **Official SDK docs:** [npmjs.com/package/@coralogix/browser](https://www.npmjs.com/package/@coralogix/browser?activeTab=readme) — the example below is a sample showing how it can be done, not a substitute for the full guide.
+
 Real User Monitoring runs entirely in the browser — no OTel agent involved. RUM data is sent directly from the user's browser to Coralogix.
 
 ### 1. Install the SDK
