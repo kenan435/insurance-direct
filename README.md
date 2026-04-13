@@ -4,13 +4,51 @@ This repo contains reference instrumentation examples for Kotlin and Python serv
 
 ---
 
-## How it works
+## Architecture
 
-```
-Your App Pod  →  OTel Agent (DaemonSet, same node)  →  Gateway (tail sampling, 3 replicas)  →  Coralogix
+```mermaid
+flowchart TB
+    subgraph Browser["🌐 Browser"]
+        Angular["Angular App\n(@coralogix/browser)"]
+    end
+
+    subgraph K8s["☸️ Kubernetes Cluster (EKS)"]
+        direction TB
+        nginx["nginx Pod\n(LoadBalancer)\nangular-rum"]
+
+        subgraph Node["Worker Node"]
+            direction TB
+            Kotlin["Kotlin Service\n(Spring Boot)"]
+            Python["Python Service\n(Flask + Gunicorn)"]
+            Agent["OTel Agent\n(DaemonSet)"]
+        end
+
+        Gateway["OTel Gateway\n(tail sampling · 3 replicas)"]
+    end
+
+    subgraph Coralogix["☁️ Coralogix"]
+        RUM["RUM\n(sessions · recordings)"]
+        APM["APM\n(traces · metrics · logs)"]
+    end
+
+    Angular -- "HTTP (traceparent header)" --> nginx
+    nginx -- "/kotlin/*" --> Kotlin
+    nginx -- "/python/*" --> Python
+    Kotlin -- "OTLP gRPC\n(hostIP:4317)" --> Agent
+    Python -- "OTLP gRPC\n(hostIP:4317)" --> Agent
+    Agent --> Gateway
+    Gateway --> APM
+    Angular -- "RUM events\n(direct ingress)" --> RUM
+
+    style Browser fill:#e8f4fd,stroke:#2196f3
+    style K8s fill:#f0f7f0,stroke:#4caf50
+    style Coralogix fill:#fff3e0,stroke:#ff9800
+    style Node fill:#fafafa,stroke:#9e9e9e,stroke-dasharray:5 5
 ```
 
-The agent runs as a DaemonSet — one pod per node. Your app sends telemetry to the agent on the same node using the node's IP, and the agent forwards it to Coralogix.
+The OTel agent runs as a DaemonSet — one pod per node. Each service sends telemetry to the agent on the same node via the node's host IP, the agent forwards to the gateway for tail sampling, and the gateway ships to Coralogix.
+
+Browser RUM data bypasses the agent entirely — the `@coralogix/browser` SDK sends directly to Coralogix ingress. The `traceparent` header injected into API calls links browser spans to backend OTel spans for end-to-end traces.
 
 ---
 
