@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-generator
+  namespace: hellas
+  labels:
+    app: load-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: load-generator
+  template:
+    metadata:
+      labels:
+        app: load-generator
+    spec:
+      containers:
+        - name: load-generator
+          image: curlimages/curl:8.7.1
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              KOTLIN=http://kotlin-service:8080
+              PYTHON=http://python-service:8000
+
+              POLICY_IDS="POL-001 POL-002 POL-003 POL-005"
+              EXPIRED="POL-004"
+
+              pick_policy() {
+                set -- $POLICY_IDS
+                shift $(( RANDOM % 4 ))
+                echo $1
+              }
+
+              while true; do
+                R=$(( RANDOM % 100 ))
+
+                if [ $R -lt 18 ]; then
+                  echo "[kotlin] GET /policies"
+                  curl -sf $KOTLIN/policies > /dev/null
+
+                elif [ $R -lt 36 ]; then
+                  echo "[python] GET /policies"
+                  curl -sf $PYTHON/policies > /dev/null
+
+                elif [ $R -lt 44 ]; then
+                  P=$(pick_policy)
+                  echo "[kotlin] GET /policies/$P"
+                  curl -sf $KOTLIN/policies/$P > /dev/null
+
+                elif [ $R -lt 52 ]; then
+                  P=$(pick_policy)
+                  echo "[python] GET /policies/$P"
+                  curl -sf $PYTHON/policies/$P > /dev/null
+
+                elif [ $R -lt 62 ]; then
+                  P=$(pick_policy)
+                  AMT=$(( RANDOM % 4800 + 200 ))
+                  echo "[kotlin] POST /claims policy=$P amount=$AMT"
+                  curl -sf -X POST $KOTLIN/claims \
+                    -H 'Content-Type: application/json' \
+                    -d "{\"policyId\":\"$P\",\"description\":\"Auto claim\",\"estimatedAmount\":$AMT}" > /dev/null
+
+                elif [ $R -lt 72 ]; then
+                  P=$(pick_policy)
+                  AMT=$(( RANDOM % 4800 + 200 ))
+                  echo "[python] POST /claims policy=$P amount=$AMT"
+                  curl -sf -X POST $PYTHON/claims \
+                    -H 'Content-Type: application/json' \
+                    -d "{\"policyId\":\"$P\",\"estimatedAmount\":$AMT}" > /dev/null
+
+                elif [ $R -lt 80 ]; then
+                  AMT=$(( RANDOM % 15000 + 11000 ))
+                  echo "[kotlin] POST /claims OVER_LIMIT amount=$AMT"
+                  curl -sf -X POST $KOTLIN/claims \
+                    -H 'Content-Type: application/json' \
+                    -d "{\"policyId\":\"POL-001\",\"description\":\"Large claim\",\"estimatedAmount\":$AMT}" > /dev/null
+
+                elif [ $R -lt 88 ]; then
+                  AMT=$(( RANDOM % 15000 + 11000 ))
+                  echo "[python] POST /claims OVER_LIMIT amount=$AMT"
+                  curl -sf -X POST $PYTHON/claims \
+                    -H 'Content-Type: application/json' \
+                    -d "{\"policyId\":\"POL-002\",\"estimatedAmount\":$AMT}" > /dev/null
+
+                elif [ $R -lt 93 ]; then
+                  echo "[kotlin] POST /claims EXPIRED_POLICY"
+                  curl -sf -X POST $KOTLIN/claims \
+                    -H 'Content-Type: application/json' \
+                    -d "{\"policyId\":\"$EXPIRED\",\"description\":\"Expired policy claim\",\"estimatedAmount\":750}" > /dev/null
+
+                elif [ $R -lt 97 ]; then
+                  echo "[python] POST /claims EXPIRED_POLICY"
+                  curl -sf -X POST $PYTHON/claims \
+                    -H 'Content-Type: application/json' \
+                    -d "{\"policyId\":\"$EXPIRED\",\"estimatedAmount\":750}" > /dev/null
+
+                else
+                  echo "[kotlin] GET /policies/POL-999 (404)"
+                  curl -sf $KOTLIN/policies/POL-999 > /dev/null
+
+                fi
+
+                sleep $(( RANDOM % 4 + 2 ))
+              done
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi

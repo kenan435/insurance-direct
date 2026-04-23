@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: angular-rum
-  namespace: insurance-direct
+  namespace: hellas
 spec:
   replicas: 1
   selector:

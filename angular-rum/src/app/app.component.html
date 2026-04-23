@@ -3,15 +3,23 @@
 <section>
   <h2>Kotlin Service</h2>
   <button (click)="getKotlinPolicies()">GET /policies</button>
+  <button (click)="getKotlinPolicy('POL-001')">GET /policies/POL-001</button>
+  <button (click)="getKotlinPolicy('POL-999')" class="btn-error">GET /policies/POL-999 (404)</button>
   <button (click)="submitKotlinClaim()">POST /claims</button>
+  <button (click)="submitKotlinClaimOverLimit()" class="btn-error">POST /claims over limit (422)</button>
+  <button (click)="submitKotlinClaimExpired()" class="btn-error">POST /claims expired policy (400)</button>
 </section>
 
 <section>
   <h2>Python Service</h2>
   <button (click)="getPythonPolicies()">GET /policies</button>
+  <button (click)="getPythonPolicy('POL-001')">GET /policies/POL-001</button>
+  <button (click)="getPythonPolicy('POL-999')" class="btn-error">GET /policies/POL-999 (404)</button>
   <button (click)="submitPythonClaim()">POST /claims</button>
+  <button (click)="submitPythonClaimOverLimit()" class="btn-error">POST /claims over limit (422)</button>
+  <button (click)="submitPythonClaimExpired()" class="btn-error">POST /claims expired policy (400)</button>
 </section>
 
 <p class="loading" *ngIf="loading">Loading...</p>
-<p class="error" *ngIf="error">Error: {{ error }}</p>
+<p class="error" *ngIf="error">{{ error }}</p>
 <pre *ngIf="response">{{ response | json }}</pre>

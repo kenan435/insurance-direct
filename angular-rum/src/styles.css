@@ -36,6 +36,15 @@ button:hover {
   background: #f0f0f0;
 }
 
+button.btn-error {
+  border-color: #c00;
+  color: #c00;
+}
+
+button.btn-error:hover {
+  background: #fff0f0;
+}
+
 pre {
   background: #eee;
   padding: 1rem;

@@ -6,7 +6,7 @@ import { appConfig } from './app/app.config';
 CoralogixRum.init({
   application: 'insurance-direct',
   environment: 'production',
-  public_key: '<your-rum-public-key>',
+  public_key: '<YOUR-RUM-PUBLIC-KEY>',
   coralogixDomain: 'EU2',
   version: '1.0.0',
   runOutsideAngularZone: true,
